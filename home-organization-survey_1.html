@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Organization Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #7B9E87;
+    --sage-light: #B8CEBC;
+    --sage-pale: #EEF4F0;
+    --cream: #FAF8F4;
+    --clay: #C4956A;
+    --clay-light: #E8C9A8;
+    --ink: #2A2A2A;
+    --ink-soft: #5C5C5C;
+    --ink-muted: #9A9A9A;
+    --white: #FFFFFF;
+    --border: #DDE5DF;
+    --shadow: 0 2px 20px rgba(0,0,0,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* Language toggle */
+  .lang-bar {
+    background: var(--ink);
+    padding: 10px 40px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .lang-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.6);
+    padding: 5px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .lang-btn.active {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: white;
+  }
+
+  /* Header */
+  .header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 40px 40px;
+    text-align: center;
+  }
+
+  .header-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 16px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    color: var(--sage);
+  }
+
+  .header-sub {
+    font-size: 14px;
+    color: var(--ink-soft);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    max-width: 760px;
+    margin: 32px auto 0;
+    padding: 0 20px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sage), var(--clay));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* Main */
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 48px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    width: 36px;
+    height: 36px;
+    background: var(--sage);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* Question */
+  .question {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .question:focus-within {
+    border-color: var(--sage-light);
+    box-shadow: 0 0 0 3px rgba(123,158,135,0.1);
+  }
+
+  .question label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+
+  .question .sublabel {
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-weight: 300;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
+  /* Text inputs */
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--sage-pale);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    resize: vertical;
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--sage);
+    background: white;
+  }
+
+  textarea { min-height: 90px; }
+
+  /* Radio / Checkbox groups */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .options-grid.single-col {
+    grid-template-columns: 1fr;
+  }
+
+  .opt-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--sage-pale);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 13.5px;
+    line-height: 1.4;
+  }
+
+  .opt-label:hover {
+    border-color: var(--sage-light);
+    background: white;
+  }
+
+  .opt-label input {
+    width: auto;
+    background: none;
+    border: none;
+    padding: 0;
+    accent-color: var(--sage);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .opt-label input:checked + span,
+  .opt-label:has(input:checked) {
+    font-weight: 500;
+  }
+
+  .opt-label:has(input:checked) {
+    background: white;
+    border-color: var(--sage);
+    box-shadow: 0 0 0 2px rgba(123,158,135,0.15);
+  }
+
+  /* Scale */
+  .scale-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--ink-muted);
+    padding: 0 2px;
+  }
+
+  .scale-options {
+    display: flex;
+    gap: 8px;
+  }
+
+  .scale-opt {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .scale-opt input[type="radio"] {
+    width: auto;
+    background: none;
+    border: none;
+    padding: 0;
+    accent-color: var(--sage);
+    cursor: pointer;
+  }
+
+  .scale-opt span {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  /* Submit area */
+  .submit-area {
+    text-align: center;
+    padding-top: 16px;
+  }
+
+  .submit-btn {
+    background: var(--ink);
+    color: white;
+    border: none;
+    padding: 16px 48px;
+    border-radius: 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .submit-btn:hover {
+    background: var(--sage);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(123,158,135,0.35);
+  }
+
+  .submit-note {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 12px;
+  }
+
+  /* Success screen */
+  .success {
+    display: none;
+    text-align: center;
+    padding: 80px 20px;
+  }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--sage-pale);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 28px;
+  }
+
+  .success h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .success p {
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .header { padding: 36px 20px 28px; }
+    .question { padding: 20px; }
+    .options-grid { grid-template-columns: 1fr; }
+    .lang-bar { padding: 10px 20px; }
+  }
+
+  /* Bilingual */
+  [data-en], [data-es] { display: none; }
+  .lang-en [data-en] { display: block; }
+  .lang-en span[data-en] { display: inline; }
+  .lang-es [data-es] { display: block; }
+  .lang-es span[data-es] { display: inline; }
+</style>
+</head>
+<body class="lang-en">
+
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('en')">English</button>
+  <button class="lang-btn" onclick="setLang('es')">Español</button>
+</div>
+
+<header class="header">
+  <p class="header-eyebrow">
+    <span data-en>Home Organization Consultation</span>
+    <span data-es>Consulta de organización del hogar</span>
+  </p>
+  <h1>
+    <span data-en>Tell us about your <em>home & life</em></span>
+    <span data-es>Cuéntanos sobre tu <em>hogar y tu vida</em></span>
+  </h1>
+  <p class="header-sub">
+    <span data-en>Your answers help us design an organization system built specifically for the way you actually live — not a generic solution.</span>
+    <span data-es>Tus respuestas nos permiten diseñar un sistema de organización hecho para la forma en que realmente vives, no una solución genérica.</span>
+  </p>
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span data-en>Your progress</span>
+      <span data-es>Tu progreso</span>
+      <span id="pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
+  </div>
+</header>
+
+<main>
+  <form id="survey" action="https://formspree.io/f/mjgenynq" method="POST" onsubmit="handleSubmit(event)">
+
+    <!-- SECTION 1: Household -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div class="section-title">
+          <span data-en>Household composition</span>
+          <span data-es>Composición del hogar</span>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>How many people live in your home?</span>
+          <span data-es>¿Cuántas personas viven en tu hogar?</span>
+        </label>
+        <div class="options-grid">
+          <label class="opt-label"><input type="radio" name="residents" value="1"><span data-en>Just me</span><span data-es>Solo yo</span></label>
+          <label class="opt-label"><input type="radio" name="residents" value="2"><span data-en>2 people</span><span data-es>2 personas</span></label>
+          <label class="opt-label"><input type="radio" name="residents" value="3-4"><span data-en>3–4 people</span><span data-es>3–4 personas</span></label>
+          <label class="opt-label"><input type="radio" name="residents" value="5+"><span data-en>5 or more</span><span data-es>5 o más</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Are there children living in the home?</span>
+          <span data-es>¿Hay niños viviendo en el hogar?</span>
+        </label>
+        <div class="options-grid">
+          <label class="opt-label"><input type="radio" name="children" value="no"><span data-en>No children</span><span data-es>Sin niños</span></label>
+          <label class="opt-label"><input type="radio" name="children" value="under5"><span data-en>Under 5</span><span data-es>Menores de 5 años</span></label>
+          <label class="opt-label"><input type="radio" name="children" value="5-12"><span data-en>Ages 5–12</span><span data-es>Entre 5 y 12 años</span></label>
+          <label class="opt-label"><input type="radio" name="children" value="teens"><span data-en>Teenagers</span><span data-es>Adolescentes</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Do you have pets?</span>
+          <span data-es>¿Tienes mascotas?</span>
+        </label>
+        <div class="options-grid">
+          <label class="opt-label"><input type="radio" name="pets" value="none"><span data-en>No pets</span><span data-es>Sin mascotas</span></label>
+          <label class="opt-label"><input type="radio" name="pets" value="dog"><span data-en>Dog(s)</span><span data-es>Perro(s)</span></label>
+          <label class="opt-label"><input type="radio" name="pets" value="cat"><span data-en>Cat(s)</span><span data-es>Gato(s)</span></label>
+          <label class="opt-label"><input type="radio" name="pets" value="other"><span data-en>Other</span><span data-es>Otra mascota</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Does anyone work or study from home regularly?</span>
+          <span data-es>¿Alguien trabaja o estudia desde casa con frecuencia?</span>
+        </label>
+        <div class="options-grid">
+          <label class="opt-label"><input type="radio" name="wfh" value="no"><span data-en>No</span><span data-es>No</span></label>
+          <label class="opt-label"><input type="radio" name="wfh" value="sometimes"><span data-en>Sometimes</span><span data-es>A veces</span></label>
+          <label class="opt-label"><input type="radio" name="wfh" value="fulltime"><span data-en>Full time</span><span data-es>Tiempo completo</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Daily Routines -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div class="section-title">
+          <span data-en>Daily routines</span>
+          <span data-es>Rutinas del día</span>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Describe your typical morning from when you wake up until you leave home (or start your day).</span>
+          <span data-es>Describe tu mañana típica desde que te despiertas hasta que sales de casa (o empiezas tu día).</span>
+        </label>
+        <p class="sublabel">
+          <span data-en>Include who gets ready, in what order, what areas you move through.</span>
+          <span data-es>Incluye quién se alista, en qué orden, y por qué áreas pasan.</span>
+        </p>
+        <textarea name="morning_routine" placeholder="e.g. I wake up at 6:30, shower, then get dressed while my partner makes coffee…"></textarea>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Describe your evening routine when you arrive home.</span>
+          <span data-es>Describe tu rutina al llegar a casa por la tarde o noche.</span>
+        </label>
+        <p class="sublabel">
+          <span data-en>What do you do first? Where do you put your things?</span>
+          <span data-es>¿Qué haces primero? ¿Dónde dejas tus cosas?</span>
+        </p>
+        <textarea name="evening_routine" placeholder="e.g. I drop my bag by the door, check the mail, then start dinner…"></textarea>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>How often do you cook at home?</span>
+          <span data-es>¿Con qué frecuencia cocinas en casa?</span>
+        </label>
+        <div class="options-grid">
+          <label class="opt-label"><input type="radio" name="cooking" value="rarely"><span data-en>Rarely</span><span data-es>Casi nunca</span></label>
+          <label class="opt-label"><input type="radio" name="cooking" value="few"><span data-en>A few times a week</span><span data-es>Algunas veces por semana</span></label>
+          <label class="opt-label"><input type="radio" name="cooking" value="daily"><span data-en>Daily</span><span data-es>Todos los días</span></label>
+          <label class="opt-label"><input type="radio" name="cooking" value="multiple"><span data-en>Multiple times daily</span><span data-es>Varias veces al día</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>How do you typically shop for groceries?</span>
+          <span data-es>¿Cómo sueles hacer las compras del súper?</span>
+        </label>
+        <div class="options-grid">
+          <label class="opt-label"><input type="radio" name="grocery" value="big"><span data-en>One big trip per week</span><span data-es>Una compra grande por semana</span></label>
+          <label class="opt-label"><input type="radio" name="grocery" value="small"><span data-en>Several small trips</span><span data-es>Varias compras pequeñas</span></label>
+          <label class="opt-label"><input type="radio" name="grocery" value="delivery"><span data-en>Mostly delivery</span><span data-es>Principalmente por delivery</span></label>
+          <label class="opt-label"><input type="radio" name="grocery" value="mix"><span data-en>A mix of all</span><span data-es>Combinación de todo</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Where does clutter tend to accumulate most?</span>
+          <span data-es>¿Dónde tiende a acumularse más el desorden?</span>
+        </label>
+        <p class="sublabel">
+          <span data-en>Select all that apply.</span>
+          <span data-es>Selecciona todas las que apliquen.</span>
+        </p>
+        <div class="options-grid">
+          <label class="opt-label"><input type="checkbox" name="clutter" value="entryway"><span data-en>Entryway / front door</span><span data-es>Entrada / puerta</span></label>
+          <label class="opt-label"><input type="checkbox" name="clutter" value="kitchen"><span data-en>Kitchen counter</span><span data-es>Barra de cocina</span></label>
+          <label class="opt-label"><input type="checkbox" name="clutter" value="bedroom"><span data-en>Bedroom chair/floor</span><span data-es>Silla o piso de la recámara</span></label>
+          <label class="opt-label"><input type="checkbox" name="clutter" value="livingroom"><span data-en>Living room surfaces</span><span data-es>Superficies de la sala</span></label>
+          <label class="opt-label"><input type="checkbox" name="clutter" value="bathroom"><span data-en>Bathroom counter</span><span data-es>Barra del baño</span></label>
+          <label class="opt-label"><input type="checkbox" name="clutter" value="garage"><span data-en>Garage / storage</span><span data-es>Garage / bodega</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Getting Dressed -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div class="section-title">
+          <span data-en>Closet & getting dressed</span>
+          <span data-es>Closet y rutina de vestirse</span>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Describe how you get dressed in the morning.</span>
+          <span data-es>Describe cómo te vistes en la mañana.</span>
+        </label>
+        <p class="sublabel">
+          <span data-en>Where do you do it? Do you plan outfits ahead? Where does used (but not dirty) clothing end up?</span>
+          <span data-es>¿Dónde te vistes? ¿Planeas los outfits con anticipación? ¿Dónde termina la ropa usada que no está sucia?</span>
+        </p>
+        <textarea name="dressing_routine"></textarea>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>How would you describe the current state of your closet?</span>
+          <span data-es>¿Cómo describirías el estado actual de tu closet?</span>
+        </label>
+        <div class="options-grid single-col">
+          <label class="opt-label"><input type="radio" name="closet_state" value="organized"><span data-en>Generally organized — I know where everything is</span><span data-es>Generalmente organizado: sé dónde está todo</span></label>
+          <label class="opt-label"><input type="radio" name="closet_state" value="functional"><span data-en>Functional but messy — I find things eventually</span><span data-es>Funcional pero desordenado: encuentro las cosas al final</span></label>
+          <label class="opt-label"><input type="radio" name="closet_state" value="chaotic"><span data-en>Chaotic — getting dressed is stressful</span><span data-es>Caótico: vestirme es estresante</span></label>
+          <label class="opt-label"><input type="radio" name="closet_state" value="overflow"><span data-en>Overflowing — I need more space or fewer things</span><span data-es>Desbordado: necesito más espacio o menos ropa</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Preferences -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <div class="section-title">
+          <span data-en>Preferences & style</span>
+          <span data-es>Preferencias y estilo</span>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>How do you feel about visible items on surfaces?</span>
+          <span data-es>¿Cómo te sientes con objetos visibles sobre las superficies?</span>
+        </label>
+        <div class="options-grid single-col">
+          <label class="opt-label"><input type="radio" name="surfaces" value="clear"><span data-en>I prefer everything hidden — clear surfaces calm me</span><span data-es>Prefiero todo escondido: las superficies despejadas me dan calma</span></label>
+          <label class="opt-label"><input type="radio" name="surfaces" value="some"><span data-en>Some things out is fine — only decorative or daily-use items</span><span data-es>Está bien tener algunas cosas a la vista: solo decorativas o de uso diario</span></label>
+          <label class="opt-label"><input type="radio" name="surfaces" value="visible"><span data-en>I like things visible — it helps me remember to use them</span><span data-es>Me gusta tener las cosas visibles: me ayuda a recordar usarlas</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>When it comes to organization systems, what matters most to you?</span>
+          <span data-es>Cuando se trata de sistemas de organización, ¿qué te importa más?</span>
+        </label>
+        <div class="options-grid single-col">
+          <label class="opt-label"><input type="radio" name="priority" value="easy"><span data-en>Easy to maintain — even if it's not perfect</span><span data-es>Fácil de mantener, aunque no sea perfecto</span></label>
+          <label class="opt-label"><input type="radio" name="priority" value="efficient"><span data-en>Maximum efficiency — I want a system for everything</span><span data-es>Máxima eficiencia: quiero un sistema para todo</span></label>
+          <label class="opt-label"><input type="radio" name="priority" value="aesthetic"><span data-en>Good-looking — the visual result is important</span><span data-es>Que se vea bien: el resultado visual me importa</span></label>
+          <label class="opt-label"><input type="radio" name="priority" value="balance"><span data-en>A balance of all three</span><span data-es>Un equilibrio de los tres</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>How much time are you realistically willing to spend maintaining order each day?</span>
+          <span data-es>¿Cuánto tiempo estás dispuesto/a a dedicar al orden cada día, de forma realista?</span>
+        </label>
+        <div class="options-grid">
+          <label class="opt-label"><input type="radio" name="maintenance_time" value="5"><span data-en>5 minutes or less</span><span data-es>5 minutos o menos</span></label>
+          <label class="opt-label"><input type="radio" name="maintenance_time" value="10-15"><span data-en>10–15 minutes</span><span data-es>10–15 minutos</span></label>
+          <label class="opt-label"><input type="radio" name="maintenance_time" value="30"><span data-en>Up to 30 minutes</span><span data-es>Hasta 30 minutos</span></label>
+          <label class="opt-label"><input type="radio" name="maintenance_time" value="flexible"><span data-en>Flexible — depends on the day</span><span data-es>Flexible: depende del día</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Are there household members who struggle to follow organization systems?</span>
+          <span data-es>¿Hay personas en el hogar a quienes les cuesta seguir sistemas de organización?</span>
+        </label>
+        <div class="options-grid">
+          <label class="opt-label"><input type="radio" name="struggles" value="no"><span data-en>No, everyone is on board</span><span data-es>No, todos están dispuestos</span></label>
+          <label class="opt-label"><input type="radio" name="struggles" value="kids"><span data-en>Young children</span><span data-es>Los niños pequeños</span></label>
+          <label class="opt-label"><input type="radio" name="struggles" value="partner"><span data-en>My partner / roommate</span><span data-es>Mi pareja / compañero/a</span></label>
+          <label class="opt-label"><input type="radio" name="struggles" value="me"><span data-en>Honestly, me</span><span data-es>Honestamente, yo</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: History & Goals -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <div class="section-title">
+          <span data-en>History & goals</span>
+          <span data-es>Historial y objetivos</span>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Have you tried to organize your home before? What happened?</span>
+          <span data-es>¿Has intentado organizar tu hogar antes? ¿Qué pasó?</span>
+        </label>
+        <p class="sublabel">
+          <span data-en>What worked, what didn't, and why did it fall apart (if it did)?</span>
+          <span data-es>¿Qué funcionó, qué no, y por qué dejó de funcionar (si fue el caso)?</span>
+        </p>
+        <textarea name="past_attempts"></textarea>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Which areas of your home cause you the most stress?</span>
+          <span data-es>¿Qué áreas de tu hogar te generan más estrés?</span>
+        </label>
+        <p class="sublabel">
+          <span data-en>Rank them by priority if you can.</span>
+          <span data-es>Ordénalas por prioridad si puedes.</span>
+        </p>
+        <textarea name="stress_areas" placeholder="e.g. 1. Kitchen, 2. Master closet, 3. Garage…"></textarea>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Are there any items or areas that are off-limits or that you won't part with?</span>
+          <span data-es>¿Hay objetos o áreas que no estén disponibles para cambios, o cosas que definitivamente no vas a eliminar?</span>
+        </label>
+        <textarea name="off_limits" placeholder="e.g. My book collection, the garage belongs to my partner…"></textarea>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>How does a day in your home look when everything is working well?</span>
+          <span data-es>¿Cómo se ve un día en tu hogar cuando todo está funcionando bien?</span>
+        </label>
+        <p class="sublabel">
+          <span data-en>Describe it as specifically as you can — this is the most important question.</span>
+          <span data-es>Descríbelo con el mayor detalle posible. Esta es la pregunta más importante.</span>
+        </p>
+        <textarea name="ideal_day" style="min-height:120px"></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 6: Practical -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <div class="section-title">
+          <span data-en>Practical considerations</span>
+          <span data-es>Consideraciones prácticas</span>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>What is your approximate budget for organization products (bins, shelving, labels, etc.)?</span>
+          <span data-es>¿Cuál es tu presupuesto aproximado para productos de organización (contenedores, repisas, etiquetas, etc.)?</span>
+        </label>
+        <div class="options-grid">
+          <label class="opt-label"><input type="radio" name="budget" value="under100"><span data-en>Under $100</span><span data-es>Menos de $100</span></label>
+          <label class="opt-label"><input type="radio" name="budget" value="100-300"><span data-en>$100–$300</span><span data-es>$100–$300</span></label>
+          <label class="opt-label"><input type="radio" name="budget" value="300-600"><span data-en>$300–$600</span><span data-es>$300–$600</span></label>
+          <label class="opt-label"><input type="radio" name="budget" value="600+"><span data-en>$600+</span><span data-es>$600 o más</span></label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label>
+          <span data-en>Is there anything else you'd like us to know before your consultation?</span>
+          <span data-es>¿Hay algo más que quieras que sepamos antes de tu consulta?</span>
+        </label>
+        <textarea name="extra"></textarea>
+      </div>
+    </div>
+
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">
+        <span data-en>Submit my answers</span>
+        <span data-es>Enviar mis respuestas</span>
+        ✓
+      </button>
+      <p class="submit-note">
+        <span data-en>Your responses are confidential and will only be used to prepare your consultation.</span>
+        <span data-es>Tus respuestas son confidenciales y solo se usarán para preparar tu consulta.</span>
+      </p>
+    </div>
+
+  </form>
+
+  <div class="success" id="success">
+    <div class="success-icon">🌿</div>
+    <h2>
+      <span data-en>Thank you!</span>
+      <span data-es>¡Gracias!</span>
+    </h2>
+    <p>
+      <span data-en>Your answers have been received. We'll review them before your consultation and reach out soon.</span>
+      <span data-es>Tus respuestas fueron recibidas. Las revisaremos antes de tu consulta y nos pondremos en contacto pronto.</span>
+    </p>
+  </div>
+</main>
+
+<script>
+  function setLang(lang) {
+    document.body.className = 'lang-' + lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  }
+
+  function updateProgress() {
+    const inputs = document.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked, textarea, input[type="text"]');
+    const radios = document.querySelectorAll('[name]');
+    const names = new Set([...radios].map(r => r.name));
+    const total = names.size;
+    let answered = 0;
+    names.forEach(name => {
+      const els = document.querySelectorAll(`[name="${name}"]`);
+      const isRadio = els[0].type === 'radio';
+      const isCheck = els[0].type === 'checkbox';
+      const isText = els[0].tagName === 'TEXTAREA' || els[0].type === 'text';
+      if (isRadio && [...els].some(e => e.checked)) answered++;
+      else if (isCheck && [...els].some(e => e.checked)) answered++;
+      else if (isText && els[0].value.trim().length > 0) answered++;
+    });
+    const pct = Math.round((answered / total) * 100);
+    document.getElementById('fill').style.width = pct + '%';
+    document.getElementById('pct').textContent = pct + '%';
+  }
+
+  document.getElementById('survey').addEventListener('change', updateProgress);
+  document.getElementById('survey').addEventListener('input', updateProgress);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        form.style.display = 'none';
+        document.getElementById('success').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert('There was a problem submitting the form. Please try again.');
+      }
+    } catch {
+      alert('Network error. Please check your connection and try again.');
+    }
+  }
+</script>
+</body>
+</html>
